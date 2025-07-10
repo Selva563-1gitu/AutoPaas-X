@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: &id002
+    autopaa-x.com/predicted-by: lstm-qlearning
+  labels: &id001
+    app-tier: web
+    managed-by: autopaa-x
+  name: my-web-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels: *id001
+  template:
+    metadata:
+      annotations: *id002
+      labels: *id001
+    spec:
+      containers:
+      - command:
+        - /bin/sh
+        - -c
+        - fallocate -l 150G /tmp/dummy.img && python3 -m http.server 80
+        image: python:3.9-slim
+        name: my-web-app-deployment
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 9216Mi

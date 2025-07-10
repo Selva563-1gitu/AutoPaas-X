@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoPaaS-X Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Lighter, subtle background */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top, allow scrolling */
+            min-height: 100vh;
+            padding: 2rem 1rem; /* More generous padding */
+        }
+        /* Main container styling */
+        .main-container {
+            max-width: 1000px; /* Increased max-width for more content space */
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* Deeper shadow */
+            padding: 2.5rem; /* Increased padding */
+            display: flex;
+            flex-direction: column;
+            gap: 2rem; /* Spacing between sections */
+        }
+        /* Section styling */
+        section {
+            border: 1px solid #e2e8f0; /* Subtle border */
+            border-radius: 1rem; /* Rounded corners for sections */
+            padding: 2rem; /* Generous padding within sections */
+            background-color: #fdfdfd; /* Slightly off-white for sections */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Lighter shadow for sections */
+        }
+        h1 {
+            color: #2d3748; /* Darker gray for main title */
+            font-size: 3.5rem; /* Larger main title */
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05); /* Subtle text shadow */
+        }
+        h2 {
+            color: #3182ce; /* Blue for section titles */
+            font-size: 2rem; /* Larger section titles */
+            font-weight: 700; /* Bold */
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #ebf8ff; /* Light blue underline */
+            padding-bottom: 0.5rem;
+        }
+        label {
+            color: #4a5568; /* Darker gray for labels */
+            font-weight: 600; /* Semi-bold labels */
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            border: 1px solid #cbd5e0; /* Light border for inputs */
+            padding: 0.75rem 1rem; /* More padding */
+            border-radius: 0.5rem; /* Rounded input fields */
+            font-size: 1rem;
+            transition: all 0.2s ease-in-out;
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #6366f1; /* Indigo focus ring */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); /* Soft focus ring */
+            outline: none;
+        }
+        /* Button styling */
+        button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem; /* More rounded buttons */
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background-image: linear-gradient(to right, var(--tw-gradient-stops));
+        }
+        #deployAppBtn {
+            --tw-gradient-from: #6366f1; /* Indigo 500 */
+            --tw-gradient-to: #818cf8; /* Indigo 400 */
+            background-color: #6366f1;
+        }
+        #deployAppBtn:hover {
+            --tw-gradient-from: #4f46e5; /* Indigo 600 */
+            --tw-gradient-to: #6366f1; /* Indigo 500 */
+            background-color: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.15), 0 3px 5px -1px rgba(0, 0, 0, 0.08);
+        }
+        #monitorQoSBtn {
+            --tw-gradient-from: #22c55e; /* Green 500 */
+            --tw-gradient-to: #4ade80; /* Green 400 */
+            background-color: #22c55e;
+        }
+        #monitorQoSBtn:hover {
+            --tw-gradient-from: #16a34a; /* Green 600 */
+            --tw-gradient-to: #22c55e; /* Green 500 */
+            background-color: #16a34a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.15), 0 3px 5px -1px rgba(0, 0, 0, 0.08);
+        }
+        #clearLogsBtn {
+            background-color: #ef4444; /* Red 500 */
+            box-shadow: none;
+        }
+        #clearLogsBtn:hover {
+            background-color: #dc2626; /* Red 600 */
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Output and Log Area Styling */
+        .output-box {
+            background-color: #f8fafc; /* Lighter background for output */
+            border: 1px solid #d1d5db; /* Gray-300 border */
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+        }
+        .output-box h3 {
+            color: #2d3748;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        .output-box h4 {
+            color: #4a5568;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .output-box p {
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+        .output-box strong {
+            color: #1a202c;
+        }
+
+        .log-area {
+            background-color: #1a202c; /* Darker background for logs */
+            color: #e2e8f0; /* Light text for logs */
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            height: 24rem; /* Fixed height */
+            overflow-y: auto;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+        }
+        .log-area p {
+            margin-bottom: 0.25rem;
+        }
+        .log-area span {
+            font-weight: 500;
+        }
+        .log-area .text-blue-400 { color: #60a5fa; } /* Request */
+        .log-area .text-green-400 { color: #4ade80; } /* Response */
+        .log-area .text-red-400 { color: #f87171; } /* Error */
+        .log-area .text-gray-400 { color: #9ca3af; } /* Info */
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+            h2 {
+                font-size: 1.75rem;
+            }
+            section {
+                padding: 1.5rem;
+            }
+            .grid-cols-1.md\:grid-cols-2, .grid-cols-1.md\:grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-8 px-4">
+    <div class="main-container">
+        <h1 class="text-4xl font-bold text-center mb-8">AutoPaaS-X Dashboard</h1>
+
+        <!-- Phase 1: AI-Driven Resource Provisioning -->
+        <section>
+            <h2 class="text-2xl font-semibold mb-6">Phase 1: AI-Driven Resource Provisioning</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="appName" class="block text-sm font-medium">Application Name</label>
+                    <input type="text" id="appName" class="mt-1 block w-full rounded-md shadow-sm p-2 border" value="my-web-app">
+                </div>
+                <div>
+                    <label for="os" class="block text-sm font-medium">Operating System</label>
+                    <select id="os" class="mt-1 block w-full rounded-md shadow-sm p-2 border">
+                        <option value="Linux">Linux</option>
+                        <option value="Windows">Windows</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="architecture" class="block text-sm font-medium">Architecture</label>
+                    <select id="architecture" class="mt-1 block w-full rounded-md shadow-sm p-2 border">
+                        <option value="64-bit">64-bit</option>
+                        <option value="32-bit">32-bit</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="baseImageSize" class="block text-sm font-medium">Base Image Size (GB)</label>
+                    <input type="number" id="baseImageSize" step="0.1" min="0.1" class="mt-1 block w-full rounded-md shadow-sm p-2 border" value="1.5">
+                </div>
+            </div>
+
+            <button id="deployAppBtn" class="w-full text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out font-semibold">
+                Deploy Application (AI Resource Provisioning)
+            </button>
+
+            <div id="deploymentOutput" class="mt-6 output-box hidden">
+                <h3 class="text-lg font-medium mb-2">Deployment Output:</h3>
+                <p><strong>Predicted CPU:</strong> <span id="outputCpu"></span> cores</p>
+                <p><strong>Predicted RAM:</strong> <span id="outputRam"></span> GB</p>
+                <p><strong>Scaling Action:</strong> <span id="outputScalingAction"></span></p>
+                <p><strong>Final Replicas:</strong> <span id="outputFinalReplicas"></span></p>
+                <h4 class="font-medium mt-4 mb-2">Kubernetes Deployment Manifest:</h4>
+                <pre><code id="outputK8sDeployment"></code></pre>
+                <h4 class="font-medium mt-4 mb-2">Kubernetes Warm-up CronJob Manifest:</h4>
+                <pre><code id="outputK8sCronjob"></code></pre>
+            </div>
+        </section>
+
+        <!-- Phase 2: SDN-Based Tenant Isolation -->
+        <section>
+            <h2 class="text-2xl font-semibold mb-6">Phase 2: SDN-Based Tenant Isolation</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div>
+                    <label for="tenantId" class="block text-sm font-medium">Tenant ID</label>
+                    <input type="text" id="tenantId" class="mt-1 block w-full rounded-md shadow-sm p-2 border" value="tenant_A">
+                </div>
+                <div>
+                    <label for="bandwidth" class="block text-sm font-medium">Bandwidth (Mbps)</label>
+                    <input type="number" id="bandwidth" step="1" min="0" class="mt-1 block w-full rounded-md shadow-sm p-2 border" value="800">
+                </div>
+                <div>
+                    <label for="latency" class="block text-sm font-medium">Latency (ms)</label>
+                    <input type="number" id="latency" step="1" min="0" class="mt-1 block w-full rounded-md shadow-sm p-2 border" value="30">
+                </div>
+            </div>
+            <button id="monitorQoSBtn" class="w-full text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition duration-150 ease-in-out font-semibold">
+                Monitor Traffic & Enforce QoS (SDN Isolation)
+            </button>
+
+            <div id="qosOutput" class="mt-6 output-box hidden">
+                <h3 class="text-lg font-medium mb-2">QoS Enforcement Output:</h3>
+                <p><strong>Decision:</strong> <span id="outputQosDecision"></span></p>
+                <p><strong>Rate Limit:</strong> <span id="outputRateLimit"></span></p>
+                <p><strong>Reason:</strong> <span id="outputQosReason"></span></p>
+                <h4 class="font-medium mt-4 mb-2">Current SDN Throttling Rules:</h4>
+                <pre><code id="outputSdnRules"></code></pre>
+            </div>
+        </section>
+
+        <!-- Logs Section -->
+        <section>
+            <h2 class="text-2xl font-semibold mb-4">Activity Logs</h2>
+            <div id="logContainer" class="log-area">
+                <!-- Logs will appear here -->
+                <p class="text-gray-400">Dashboard loaded. Waiting for API interactions...</p>
+            </div>
+            <button id="clearLogsBtn" class="mt-4 bg-red-500 text-white py-1.5 px-3 rounded-md text-sm hover:bg-red-600 transition duration-150 ease-in-out">Clear Logs</button>
+        </section>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000'; // Your Flask API URL
+
+        // Get elements
+        const deployAppBtn = document.getElementById('deployAppBtn');
+        const monitorQoSBtn = document.getElementById('monitorQoSBtn');
+        const clearLogsBtn = document.getElementById('clearLogsBtn');
+        const logContainer = document.getElementById('logContainer');
+
+        const deploymentOutput = document.getElementById('deploymentOutput');
+        const outputCpu = document.getElementById('outputCpu');
+        const outputRam = document.getElementById('outputRam');
+        const outputScalingAction = document.getElementById('outputScalingAction');
+        const outputFinalReplicas = document.getElementById('outputFinalReplicas');
+        const outputK8sDeployment = document.getElementById('outputK8sDeployment');
+        const outputK8sCronjob = document.getElementById('outputK8sCronjob');
+
+        const qosOutput = document.getElementById('qosOutput');
+        const outputQosDecision = document.getElementById('outputQosDecision');
+        const outputRateLimit = document.getElementById('outputRateLimit');
+        const outputQosReason = document.getElementById('outputQosReason');
+        const outputSdnRules = document.getElementById('outputSdnRules');
+
+        // --- Logging Function ---
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('p');
+            logEntry.classList.add('mb-1'); // Add some margin between log entries
+
+            if (type === 'request') {
+                logEntry.innerHTML = `<span class="text-blue-400">[${timestamp}] REQUEST:</span> ${message}`;
+            } else if (type === 'response') {
+                logEntry.innerHTML = `<span class="text-green-400">[${timestamp}] RESPONSE:</span> ${message}`;
+            } else if (type === 'error') {
+                logEntry.innerHTML = `<span class="text-red-400">[${timestamp}] ERROR:</span> ${message}`;
+            } else { // info
+                logEntry.innerHTML = `<span class="text-gray-400">[${timestamp}] INFO:</span> ${message}`;
+            }
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight; // Auto-scroll to bottom
+        }
+
+        // --- Event Listeners ---
+        deployAppBtn.addEventListener('click', deployApplication);
+        monitorQoSBtn.addEventListener('click', monitorTrafficAndQoS);
+        clearLogsBtn.addEventListener('click', () => {
+            logContainer.innerHTML = '<p class="text-gray-400">Logs cleared.</p>';
+        });
+
+        // --- Phase 1: Deploy Application ---
+        async function deployApplication() {
+            log("Initiating application deployment request...", 'info');
+
+            const appName = document.getElementById('appName').value;
+            const os = document.getElementById('os').value;
+            const architecture = document.getElementById('architecture').value;
+            const baseImageSize = parseFloat(document.getElementById('baseImageSize').value);
+
+            // Hardcoding some values for backend compatibility for now
+            // These would ideally be made optional or derived in the backend.
+            const requestBody = {
+                app_name: appName,
+                os: os,
+                architecture: architecture,
+                base_image_size_gb: baseImageSize,
+                image: "placeholder/image:latest", // Placeholder for backend
+                replicas: 1, // Placeholder for backend
+                additional_features: [] // Placeholder for backend
+            };
+
+            log(`Sending request to ${API_BASE_URL}/deploy_application with data: ${JSON.stringify(requestBody, null, 2)}`, 'request');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/deploy_application`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const data = await response.json();
+                log(`Received response: ${JSON.stringify(data, null, 2)}`, 'response');
+
+                if (response.ok) {
+                    outputCpu.textContent = data.predicted_resources.cpu_cores;
+                    outputRam.textContent = data.predicted_resources.ram_gb;
+                    outputScalingAction.textContent = data.scaling_action.name + ` (Final Replicas: ${data.scaling_action.final_replicas})`;
+                    outputFinalReplicas.textContent = data.scaling_action.final_replicas;
+                    outputK8sDeployment.textContent = JSON.stringify(data.kubernetes_deployment_manifest, null, 2);
+                    outputK8sCronjob.textContent = JSON.stringify(data.kubernetes_warmup_cronjob_manifest, null, 2);
+                    deploymentOutput.classList.remove('hidden');
+                    log("Application deployment request successful! Check outputs above.", 'info');
+                } else {
+                    log(`API Error: ${data.error || 'Unknown error'}`, 'error');
+                    deploymentOutput.classList.add('hidden');
+                }
+            } catch (error) {
+                log(`Network or API connection error: ${error.message}`, 'error');
+                deploymentOutput.classList.add('hidden');
+            }
+        }
+
+        // --- Phase 2: Monitor Traffic & Enforce QoS ---
+        async function monitorTrafficAndQoS() {
+            log("Initiating traffic monitoring and QoS enforcement request...", 'info');
+
+            const tenantId = document.getElementById('tenantId').value;
+            const bandwidth = parseFloat(document.getElementById('bandwidth').value);
+            const latency = parseFloat(document.getElementById('latency').value);
+
+            const requestBody = {
+                tenant_id: tenantId,
+                bandwidth_mbps: bandwidth,
+                latency_ms: latency
+            };
+
+            log(`Sending request to ${API_BASE_URL}/monitor_traffic_and_qos with data: ${JSON.stringify(requestBody, null, 2)}`, 'request');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/monitor_traffic_and_qos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                const data = await response.json();
+                log(`Received response: ${JSON.stringify(data, null, 2)}`, 'response');
+
+                if (response.ok) {
+                    outputQosDecision.textContent = data.throttling_decision.action;
+                    outputRateLimit.textContent = data.throttling_decision.rate_limit_mbps ? `${data.throttling_decision.rate_limit_mbps} Mbps` : 'N/A';
+                    outputQosReason.textContent = data.throttling_decision.reason;
+                    qosOutput.classList.remove('hidden');
+                    log("QoS enforcement request successful! Retrieving current SDN rules...", 'info');
+
+                    // Automatically fetch and display current SDN rules after a QoS action
+                    await fetchSdnRules();
+
+                } else {
+                    log(`API Error: ${data.error || 'Unknown error'}`, 'error');
+                    qosOutput.classList.add('hidden');
+                }
+            } catch (error) {
+                log(`Network or API connection error: ${error.message}`, 'error');
+                qosOutput.classList.add('hidden');
+            }
+        }
+
+        // Helper to fetch and display all current SDN rules
+        async function fetchSdnRules() {
+            log("Fetching current SDN throttling rules...", 'info');
+            try {
+                const response = await fetch(`${API_BASE_URL}/get_throttling_rules`);
+                const data = await response.json();
+                log(`Received SDN rules: ${JSON.stringify(data, null, 2)}`, 'response');
+                outputSdnRules.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                log(`Failed to fetch SDN rules: ${error.message}`, 'error');
+                outputSdnRules.textContent = "Error fetching rules.";
+            }
+        }
+
+        // Initial fetch of SDN rules when dashboard loads
+        fetchSdnRules();
+
+    </script>
+</body>
+</html>

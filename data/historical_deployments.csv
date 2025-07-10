@@ -1,0 +1,12 @@
+os,architecture,base_image_size_gb,feature_mysql,feature_tensorflow,feature_postgresql,feature_redis,cpu_cores_needed,ram_gb_needed
+Linux,64-bit,1.2,1,0,0,0,1,2
+Linux,64-bit,1.5,0,1,0,0,2,4
+Windows,64-bit,3.0,1,0,0,1,2,6
+Linux,32-bit,0.8,0,0,1,0,1,1
+Linux,64-bit,2.0,1,1,0,0,3,8
+Windows,64-bit,2.8,0,0,0,1,2,5
+Linux,64-bit,1.0,0,0,0,0,1,2
+Linux,64-bit,1.8,0,1,1,0,3,7
+Windows,32-bit,2.5,1,0,1,0,2,4
+Linux,64-bit,1.3,1,0,1,1,2,3
+Linux,64-bit,1.7,0,1,0,1,3,6

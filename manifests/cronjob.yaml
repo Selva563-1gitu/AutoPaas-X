@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: example-autopaa-x-cronjob
+  labels:
+    app.kubernetes.io/name: autopaa-x
+    app.kubernetes.io/component: cronjob
+spec:
+  schedule: "*/5 * * * *" # Example: Run every 5 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cronjob-container
+            image: busybox # Placeholder image
+            command: ["/bin/sh", "-c", "echo 'Hello from AutoPaaS-X scheduled task!' && date"]
+            resources:
+              limits:
+                cpu: "100m"
+                memory: "128Mi"
+          restartPolicy: OnFailure # Options: OnFailure, Never
+  concurrencyPolicy: Forbid # Options: Allow, Forbid, Replace
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1

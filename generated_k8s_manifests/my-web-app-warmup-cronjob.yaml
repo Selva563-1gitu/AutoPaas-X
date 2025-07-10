@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: my-web-app-warmup-cronjob
+  labels:
+    app.kubernetes.io/name: autopaa-x
+    app.kubernetes.io/component: cronjob
+    app-tier: warmup
+    managed-by: autopaa-x
+  annotations:
+    autopaa-x.com/warmup-for: my-web-app
+spec:
+  schedule: 0 * * * *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: my-web-app-warmup-cronjob-container
+            image: curlimages/curl:latest
+            command:
+            - /bin/sh
+            - -c
+            - curl -s -o /dev/null -w '%{http_code}' http://my-web-app-service.default.svc.cluster.local/health
+          restartPolicy: OnFailure
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
